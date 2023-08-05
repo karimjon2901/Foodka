@@ -43,7 +43,7 @@ public class CategoryResources {
             requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Category info",
                     content = @Content(mediaType = "application/json"))
     )
-    @GetMapping("{/id}")
+    @GetMapping("/{id}")
     public ResponseDto<CategoryDto> getById(@PathVariable Integer id){
         return categoryService.getById(id);
     }
