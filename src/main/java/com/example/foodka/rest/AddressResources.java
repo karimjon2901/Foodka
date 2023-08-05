@@ -18,7 +18,7 @@ public class AddressResources {
 
     @Operation(
             method = "Add new address",
-            description = "Need to send UsersDto to this endpoint to create new address",
+            description = "Need to send AddressDto to this endpoint to create new address",
             requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Address info",
                     content = @Content(mediaType = "application/json"))
     )
@@ -28,8 +28,8 @@ public class AddressResources {
     }
 
     @Operation(
-            method = "Get all address",
-            description = "This endpoint return all address",
+            method = "Get all user's addresses",
+            description = "Need to send User's id to return all user's addresses",
             requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Address info",
                     content = @Content(mediaType = "application/json"))
     )

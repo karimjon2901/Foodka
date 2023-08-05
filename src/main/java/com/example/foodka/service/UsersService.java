@@ -1,6 +1,5 @@
 package com.example.foodka.service;
 
-import com.example.foodka.dto.AddressDto;
 import com.example.foodka.dto.ResponseDto;
 import com.example.foodka.dto.UsersDto;
 
@@ -12,5 +11,4 @@ public interface UsersService {
     ResponseDto<List<UsersDto>> getAll();
     ResponseDto<UsersDto> update(UsersDto usersDto);
     ResponseDto<UsersDto> getUserByPhoneNumber(String phoneNumber);
-    ResponseDto<UsersDto> addAddress(AddressDto addressDto);
 }

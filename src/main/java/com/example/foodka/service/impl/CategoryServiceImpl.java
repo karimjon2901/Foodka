@@ -9,6 +9,7 @@ import com.example.foodka.service.mapper.CategoryMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 import static com.example.foodka.appStatus.AppStatusCodes.*;
@@ -36,6 +37,51 @@ public class CategoryServiceImpl implements CategoryService {
                     .code(DATABASE_ERROR_CODE)
                     .message(DATABASE_ERROR + " : " + e.getMessage())
                     .data(categoryDto)
+                    .build();
+        }
+    }
+
+    @Override
+    public ResponseDto<CategoryDto> getById(Integer id) {
+        if (id == null){
+            return ResponseDto.<CategoryDto>builder()
+                    .code(VALIDATION_ERROR_CODE)
+                    .message("Id is null!")
+                    .build();
+        }
+        try {
+            return categoryRepository.findById(id)
+                    .map(u -> ResponseDto.<CategoryDto>builder()
+                            .data(categoryMapper.toDto(u))
+                            .success(true)
+                            .message(OK)
+                            .build())
+                    .orElse(ResponseDto.<CategoryDto>builder()
+                            .message(NOT_FOUND)
+                            .code(NOT_FOUND_ERROR_CODE)
+                            .build());
+        }catch (Exception e){
+            return ResponseDto.<CategoryDto>builder()
+                    .message(e.getMessage())
+                    .success(true)
+                    .code(DATABASE_ERROR_CODE)
+                    .build();
+        }
+    }
+
+    @Override
+    public ResponseDto<List<CategoryDto>> getAll() {
+        try{
+            return ResponseDto.<List<CategoryDto>>builder()
+                    .message(OK)
+                    .code(OK_CODE)
+                    .success(true)
+                    .data(categoryRepository.findAll().stream().map(categoryMapper::toDto).toList())
+                    .build();
+        }catch (Exception e){
+            return ResponseDto.<List<CategoryDto>>builder()
+                    .code(DATABASE_ERROR_CODE)
+                    .message(DATABASE_ERROR + " : " + e.getMessage())
                     .build();
         }
     }

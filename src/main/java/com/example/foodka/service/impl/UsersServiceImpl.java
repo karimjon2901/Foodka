@@ -1,6 +1,5 @@
 package com.example.foodka.service.impl;
 
-import com.example.foodka.dto.AddressDto;
 import com.example.foodka.dto.ResponseDto;
 import com.example.foodka.dto.UsersDto;
 import com.example.foodka.model.Users;
@@ -42,6 +41,12 @@ public class UsersServiceImpl implements UsersService {
 
     @Override
     public ResponseDto<UsersDto> getById(Integer id) {
+        if (id == null){
+            return ResponseDto.<UsersDto>builder()
+                    .code(VALIDATION_ERROR_CODE)
+                    .message("Id is null!")
+                    .build();
+        }
         try {
             return usersRepository.findById(id)
                     .map(u -> ResponseDto.<UsersDto>builder()
@@ -156,10 +161,5 @@ public class UsersServiceImpl implements UsersService {
                     .code(DATABASE_ERROR_CODE)
                     .build();
         }
-    }
-
-    @Override
-    public ResponseDto<UsersDto> addAddress(AddressDto addressDto) {
-        return null;
     }
 }
