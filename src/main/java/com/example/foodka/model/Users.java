@@ -24,8 +24,6 @@ public class Users {
     private String name;
     private String phoneNumber;
     private String password;
-    @OneToMany
-    private List<Address> addresses;
     private String role="USER";
     @CreatedDate
     @CreationTimestamp
