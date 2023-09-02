@@ -22,15 +22,25 @@ public class UsersServiceImpl implements UsersService {
     @Override
     public ResponseDto<UsersDto> add(UsersDto usersDto) {
         try{
-            Users user = usersMapper.toEntity(usersDto);
-            usersRepository.save(user);
+            Optional<Users> user1 = usersRepository.findFirstByPhoneNumber(usersDto.getPhoneNumber());
+            if (user1.isEmpty()){
+                Users user = usersMapper.toEntity(usersDto);
+                usersRepository.save(user);
 
-            return ResponseDto.<UsersDto>builder()
-                    .message(OK)
-                    .code(OK_CODE)
-                    .success(true)
-                    .data(usersDto)
-                    .build();
+                return ResponseDto.<UsersDto>builder()
+                        .message(OK)
+                        .code(OK_CODE)
+                        .success(true)
+                        .data(usersDto)
+                        .build();
+            }
+            else {
+                return ResponseDto.<UsersDto>builder()
+                        .message("This phone number already exists!")
+                        .code(VALIDATION_ERROR_CODE)
+                        .build();
+            }
+
         }catch (Exception e){
             return ResponseDto.<UsersDto>builder()
                     .code(DATABASE_ERROR_CODE)
