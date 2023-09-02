@@ -12,7 +12,7 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class OrderDto {
+public class OrdersDto {
     private Integer id;
     private UsersDto user;
     private Double price;

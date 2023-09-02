@@ -1,8 +1,8 @@
 package com.example.foodka.rest;
 
-import com.example.foodka.dto.OrderDto;
+import com.example.foodka.dto.OrdersDto;
 import com.example.foodka.dto.ResponseDto;
-import com.example.foodka.service.OrderService;
+import com.example.foodka.service.OrdersService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import lombok.RequiredArgsConstructor;
@@ -14,8 +14,8 @@ import java.util.List;
 @RestController
 @RequestMapping("/order")
 @RequiredArgsConstructor
-public class OrderResources {
-    private final OrderService orderService;
+public class OrdersResources {
+    private final OrdersService ordersService;
 
     @Operation(
             method = "Add new order",
@@ -24,8 +24,8 @@ public class OrderResources {
                     content = @Content(mediaType = "application/json"))
     )
     @PostMapping
-    public ResponseDto<OrderDto> add(@RequestBody OrderDto orderDto){
-        return orderService.add(orderDto);
+    public ResponseDto<OrdersDto> add(@RequestBody OrdersDto ordersDto){
+        return ordersService.add(ordersDto);
     }
 
     @Operation(
@@ -35,9 +35,9 @@ public class OrderResources {
                     content = @Content(mediaType = "application/json"))
     )
     @GetMapping
-    public ResponseDto<Page<OrderDto>> getAll(@RequestParam(defaultValue = "10") Integer size,
-                                              @RequestParam(defaultValue = "0") Integer page){
-        return orderService.getAll(size, page);
+    public ResponseDto<Page<OrdersDto>> getAll(@RequestParam(defaultValue = "10") Integer size,
+                                               @RequestParam(defaultValue = "0") Integer page){
+        return ordersService.getAll(size, page);
     }
 
     @Operation(
@@ -47,8 +47,8 @@ public class OrderResources {
                     content = @Content(mediaType = "application/json"))
     )
     @GetMapping("/by-id/{id}")
-    public ResponseDto<OrderDto> getById(@PathVariable Integer id){
-        return orderService.getById(id);
+    public ResponseDto<OrdersDto> getById(@PathVariable Integer id){
+        return ordersService.getById(id);
     }
 
     @Operation(
@@ -58,8 +58,8 @@ public class OrderResources {
                     content = @Content(mediaType = "application/json"))
     )
     @GetMapping("/by-user-id/{id}")
-    public ResponseDto<List<OrderDto>> getByUserId(@PathVariable Integer id){
-        return orderService.getByUserId(id);
+    public ResponseDto<List<OrdersDto>> getByUserId(@PathVariable Integer id){
+        return ordersService.getByUserId(id);
     }
 
     @Operation(
@@ -69,7 +69,7 @@ public class OrderResources {
                     content = @Content(mediaType = "application/json"))
     )
     @PatchMapping
-    public ResponseDto<OrderDto> update(@RequestBody OrderDto orderDto){
-        return orderService.update(orderDto);
+    public ResponseDto<OrdersDto> update(@RequestBody OrdersDto ordersDto){
+        return ordersService.update(ordersDto);
     }
 }

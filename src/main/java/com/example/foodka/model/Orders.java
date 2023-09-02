@@ -19,7 +19,7 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Order {
+public class Orders {
     @Id
     private Integer id;
     @ManyToOne

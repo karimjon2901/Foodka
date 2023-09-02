@@ -1,11 +1,11 @@
 package com.example.foodka.service.impl;
 
-import com.example.foodka.dto.OrderDto;
+import com.example.foodka.dto.OrdersDto;
 import com.example.foodka.dto.ResponseDto;
-import com.example.foodka.model.Order;
-import com.example.foodka.repository.OrderRepository;
-import com.example.foodka.service.OrderService;
-import com.example.foodka.service.mapper.OrderMapper;
+import com.example.foodka.model.Orders;
+import com.example.foodka.repository.OrdersRepository;
+import com.example.foodka.service.OrdersService;
+import com.example.foodka.service.mapper.OrdersMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -19,24 +19,24 @@ import static com.example.foodka.appStatus.AppStatusMessages.*;
 
 @Service
 @RequiredArgsConstructor
-public class OrderServiceImpl implements OrderService {
-    private final OrderRepository orderRepository;
-    private final OrderMapper orderMapper;
+public class OrdersServiceImpl implements OrdersService {
+    private final OrdersRepository ordersRepository;
+    private final OrdersMapper ordersMapper;
 
     @Override
-    public ResponseDto<OrderDto> add(OrderDto orderDto) {
-        Order order = orderMapper.toEntity(orderDto);
+    public ResponseDto<OrdersDto> add(OrdersDto ordersDto) {
+        Orders orders = ordersMapper.toEntity(ordersDto);
 
         try{
-            orderRepository.save(order);
+            ordersRepository.save(orders);
 
-            return ResponseDto.<OrderDto>builder()
+            return ResponseDto.<OrdersDto>builder()
                     .success(true)
                     .message(OK)
-                    .data(orderMapper.toDto(order))
+                    .data(ordersMapper.toDto(orders))
                     .build();
         } catch (Exception e){
-            return ResponseDto.<OrderDto>builder()
+            return ResponseDto.<OrdersDto>builder()
                     .code(DATABASE_ERROR_CODE)
                     .message(DATABASE_ERROR + " -> " + e.getMessage())
                     .build();
@@ -44,8 +44,8 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public ResponseDto<Page<OrderDto>> getAll(Integer size, Integer page) {
-        Long count = orderRepository.count();
+    public ResponseDto<Page<OrdersDto>> getAll(Integer size, Integer page) {
+        Long count = ordersRepository.count();
 
         PageRequest pageRequest = PageRequest.of(
                 (count / size) <= page ?
@@ -56,15 +56,15 @@ public class OrderServiceImpl implements OrderService {
         );
 
         try {
-            Page<OrderDto> all = orderRepository.findAll(pageRequest).map(orderMapper::toDto);
+            Page<OrdersDto> all = ordersRepository.findAll(pageRequest).map(ordersMapper::toDto);
 
-            return ResponseDto.<Page<OrderDto>>builder()
+            return ResponseDto.<Page<OrdersDto>>builder()
                     .success(true)
                     .message(OK)
                     .data(all)
                     .build();
         } catch (Exception e){
-            return ResponseDto.<Page<OrderDto>>builder()
+            return ResponseDto.<Page<OrdersDto>>builder()
                     .code(DATABASE_ERROR_CODE)
                     .message(DATABASE_ERROR + " -> " + e.getMessage())
                     .build();
@@ -72,30 +72,30 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public ResponseDto<OrderDto> getById(Integer id) {
+    public ResponseDto<OrdersDto> getById(Integer id) {
         if (id == null) {
-            return ResponseDto.<OrderDto>builder()
+            return ResponseDto.<OrdersDto>builder()
                     .message("Id is null")
                     .code(VALIDATION_ERROR_CODE)
                     .build();
         }
         try {
-            Optional<Order> byId = orderRepository.findById(id);
+            Optional<Orders> byId = ordersRepository.findById(id);
             if (!byId.isEmpty()) {
-                return ResponseDto.<OrderDto>builder()
-                        .data(orderMapper.toDto(byId.get()))
+                return ResponseDto.<OrdersDto>builder()
+                        .data(ordersMapper.toDto(byId.get()))
                         .success(true)
                         .code(OK_CODE)
                         .message(OK)
                         .build();
             }
-            return ResponseDto.<OrderDto>builder()
+            return ResponseDto.<OrdersDto>builder()
                     .message(NOT_FOUND)
                     .code(NOT_FOUND_ERROR_CODE)
                     .build();
 
         } catch (Exception e) {
-            return ResponseDto.<OrderDto>builder()
+            return ResponseDto.<OrdersDto>builder()
                     .message(DATABASE_ERROR)
                     .code(DATABASE_ERROR_CODE)
                     .build();
@@ -103,30 +103,30 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public ResponseDto<List<OrderDto>> getByUserId(Integer id) {
+    public ResponseDto<List<OrdersDto>> getByUserId(Integer id) {
         if (id == null){
-            return ResponseDto.<List<OrderDto>>builder()
+            return ResponseDto.<List<OrdersDto>>builder()
                     .code(VALIDATION_ERROR_CODE)
                     .message("Id is null!")
                     .build();
         }
         try{
-            List<Order> allByCategoryId = orderRepository.findAllByUserId(id);
+            List<Orders> allByCategoryId = ordersRepository.findAllByUserId(id);
             if (!allByCategoryId.isEmpty()){
-                return ResponseDto.<List<OrderDto>>builder()
+                return ResponseDto.<List<OrdersDto>>builder()
                         .message(OK)
                         .code(OK_CODE)
                         .success(true)
-                        .data(allByCategoryId.stream().map(orderMapper::toDto).toList())
+                        .data(allByCategoryId.stream().map(ordersMapper::toDto).toList())
                         .build();
             }else {
-                return ResponseDto.<List<OrderDto>>builder()
+                return ResponseDto.<List<OrdersDto>>builder()
                         .code(NOT_FOUND_ERROR_CODE)
                         .message(NOT_FOUND)
                         .build();
             }
         }catch (Exception e){
-            return ResponseDto.<List<OrderDto>>builder()
+            return ResponseDto.<List<OrdersDto>>builder()
                     .code(DATABASE_ERROR_CODE)
                     .message(DATABASE_ERROR + " : " + e.getMessage())
                     .build();
@@ -134,48 +134,48 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public ResponseDto<OrderDto> update(OrderDto orderDto) {
-        if (orderDto.getId() == null) {
-            return ResponseDto.<OrderDto>builder()
+    public ResponseDto<OrdersDto> update(OrdersDto ordersDto) {
+        if (ordersDto.getId() == null) {
+            return ResponseDto.<OrdersDto>builder()
                     .message("Product ID is null")
                     .code(VALIDATION_ERROR_CODE)
                     .build();
         }
 
-        Optional<Order> optional = orderRepository.findById(orderDto.getId());
+        Optional<Orders> optional = ordersRepository.findById(ordersDto.getId());
 
         if (optional.isEmpty()) {
-            return ResponseDto.<OrderDto>builder()
+            return ResponseDto.<OrdersDto>builder()
                     .code(NOT_FOUND_ERROR_CODE)
                     .message(NOT_FOUND)
                     .build();
         }
 
-        Order order = optional.get();
+        Orders orders = optional.get();
 
-        if (orderDto.getDescription() != null) {
-            order.setDescription(orderDto.getDescription());
+        if (ordersDto.getDescription() != null) {
+            orders.setDescription(ordersDto.getDescription());
         }
-        if (orderDto.getPrice() != null) {
-            order.setPrice(orderDto.getPrice());
+        if (ordersDto.getPrice() != null) {
+            orders.setPrice(ordersDto.getPrice());
         }
-        if (orderDto.getTime() != null){
-            order.setTime(orderDto.getTime());
+        if (ordersDto.getTime() != null){
+            orders.setTime(ordersDto.getTime());
         }
-        if (orderDto.getStatus() != null) {
-            order.setStatus(orderDto.getStatus());
+        if (ordersDto.getStatus() != null) {
+            orders.setStatus(ordersDto.getStatus());
         }
 
         try {
-            orderRepository.save(order);
+            ordersRepository.save(orders);
 
-            return ResponseDto.<OrderDto>builder()
+            return ResponseDto.<OrdersDto>builder()
                     .message(OK)
-                    .data(orderMapper.toDto(order))
+                    .data(ordersMapper.toDto(orders))
                     .success(true)
                     .build();
         } catch (Exception e) {
-            return ResponseDto.<OrderDto>builder()
+            return ResponseDto.<OrdersDto>builder()
                     .message(DATABASE_ERROR + ": " + e.getMessage())
                     .code(DATABASE_ERROR_CODE)
                     .build();
