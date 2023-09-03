@@ -1,9 +1,6 @@
 package com.example.foodka.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,6 +18,8 @@ import java.util.List;
 @NoArgsConstructor
 public class Orders {
     @Id
+    @GeneratedValue(generator = "ordersIdSeq")
+    @SequenceGenerator(name = "ordersIdSeq", sequenceName = "orders_id_seq", allocationSize = 1)
     private Integer id;
     @ManyToOne
     private Users user;
