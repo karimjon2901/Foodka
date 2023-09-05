@@ -1,5 +1,7 @@
 package com.example.foodka.service.impl;
 
+import com.example.foodka.config.JwtService;
+import com.example.foodka.dto.LoginDto;
 import com.example.foodka.dto.ResponseDto;
 import com.example.foodka.dto.UsersDto;
 import com.example.foodka.model.Users;
@@ -7,6 +9,9 @@ import com.example.foodka.repository.UsersRepository;
 import com.example.foodka.service.UsersService;
 import com.example.foodka.service.mapper.UsersMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,6 +24,8 @@ import static com.example.foodka.appStatus.AppStatusMessages.*;
 public class UsersServiceImpl implements UsersService {
     private final UsersRepository usersRepository;
     private final UsersMapper usersMapper;
+    private final JwtService jwtService;
+    private final PasswordEncoder encoder;
     @Override
     public ResponseDto<UsersDto> add(UsersDto usersDto) {
         try{
@@ -171,5 +178,28 @@ public class UsersServiceImpl implements UsersService {
                     .code(DATABASE_ERROR_CODE)
                     .build();
         }
+    }
+
+    @Override
+    public ResponseDto<String> loginUser(LoginDto loginDto) {
+        Users users = loadUserByUsername(loginDto.getUsername());
+        if (!encoder.matches(loginDto.getPassword(),users.getPassword())){
+            return ResponseDto.<String>builder()
+                    .message("Password is not correct "+users.getPassword())
+                    .code(VALIDATION_ERROR_CODE)
+                    .build();
+        }
+
+        return ResponseDto.<String>builder()
+                .success(true)
+                .message(OK)
+                .data(jwtService.generateToken((UserDetails) users))
+                .build();
+    }
+
+    private Users loadUserByUsername(String username) throws UsernameNotFoundException {
+        Optional<Users> users = usersRepository.findFirstByPhoneNumber(username);
+        if (users.isEmpty()) throw new UsernameNotFoundException("User with phone number: " + username + " is not found");
+        return users.get();
     }
 }

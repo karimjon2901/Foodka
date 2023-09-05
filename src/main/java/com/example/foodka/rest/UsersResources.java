@@ -1,5 +1,6 @@
 package com.example.foodka.rest;
 
+import com.example.foodka.dto.LoginDto;
 import com.example.foodka.dto.ResponseDto;
 import com.example.foodka.dto.UsersDto;
 import com.example.foodka.service.UsersService;
@@ -38,6 +39,10 @@ public class UsersResources {
         return usersService.update(usersDto);
     }
 
+    @PostMapping("/login")
+    public ResponseDto<String> loginUser(@RequestBody LoginDto loginDto) throws NoSuchMethodException {
+        return usersService.loginUser(loginDto);
+    }
     @Operation(
             method = "Get user by phone number",
             description = "Need to send phone number to this endpoint to get user",
