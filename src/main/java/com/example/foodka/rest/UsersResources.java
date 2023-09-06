@@ -24,7 +24,7 @@ public class UsersResources {
                     content = @Content(mediaType = "application/json"))
     )
     @PostMapping
-    public ResponseDto<UsersDto> add(@RequestBody UsersDto usersDto){
+    public ResponseDto<String> add(@RequestBody UsersDto usersDto){
         return usersService.add(usersDto);
     }
 
@@ -39,6 +39,12 @@ public class UsersResources {
         return usersService.update(usersDto);
     }
 
+    @Operation(
+            method = "Login user",
+            description = "Need to send username and password to this endpoint to login user. You can get token.",
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Users info",
+                    content = @Content(mediaType = "application/json"))
+    )
     @PostMapping("/login")
     public ResponseDto<String> loginUser(@RequestBody LoginDto loginDto) throws NoSuchMethodException {
         return usersService.loginUser(loginDto);

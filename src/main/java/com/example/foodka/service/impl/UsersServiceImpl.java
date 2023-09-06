@@ -27,29 +27,29 @@ public class UsersServiceImpl implements UsersService {
     private final JwtService jwtService;
     private final PasswordEncoder encoder;
     @Override
-    public ResponseDto<UsersDto> add(UsersDto usersDto) {
+    public ResponseDto<String> add(UsersDto usersDto) {
         try{
             Optional<Users> user1 = usersRepository.findFirstByPhoneNumber(usersDto.getPhoneNumber());
             if (user1.isEmpty()){
                 Users user = usersMapper.toEntity(usersDto);
                 usersRepository.save(user);
 
-                return ResponseDto.<UsersDto>builder()
+                return ResponseDto.<String >builder()
                         .message(OK)
                         .code(OK_CODE)
                         .success(true)
-                        .data(usersDto)
+                        .data(jwtService.generateToken(user))
                         .build();
             }
             else {
-                return ResponseDto.<UsersDto>builder()
+                return ResponseDto.<String>builder()
                         .message("This phone number already exists!")
                         .code(VALIDATION_ERROR_CODE)
                         .build();
             }
 
         }catch (Exception e){
-            return ResponseDto.<UsersDto>builder()
+            return ResponseDto.<String>builder()
                     .code(DATABASE_ERROR_CODE)
                     .message(DATABASE_ERROR + " : " + e.getMessage())
                     .build();
@@ -193,7 +193,7 @@ public class UsersServiceImpl implements UsersService {
         return ResponseDto.<String>builder()
                 .success(true)
                 .message(OK)
-                .data(jwtService.generateToken((UserDetails) users))
+                .data(jwtService.generateToken(users))
                 .build();
     }
 
