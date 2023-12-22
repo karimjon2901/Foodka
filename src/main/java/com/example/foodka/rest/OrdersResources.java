@@ -47,7 +47,7 @@ public class OrdersResources {
                     content = @Content(mediaType = "application/json"))
     )
     @GetMapping("/by-id/{id}")
-    public ResponseDto<OrdersDto> getById(@PathVariable Integer id){
+    public ResponseDto<OrdersDto> getById(@PathVariable String id){
         return ordersService.getById(id);
     }
 
@@ -58,7 +58,7 @@ public class OrdersResources {
                     content = @Content(mediaType = "application/json"))
     )
     @GetMapping("/by-user-id/{id}")
-    public ResponseDto<List<OrdersDto>> getByUserId(@PathVariable Integer id){
+    public ResponseDto<List<OrdersDto>> getByUserId(@PathVariable String id){
         return ordersService.getByUserId(id);
     }
 

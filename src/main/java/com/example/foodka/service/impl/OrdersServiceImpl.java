@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
-import static com.example.foodka.appStatus.AppStatusCodes.*;
 import static com.example.foodka.appStatus.AppStatusMessages.*;
 
 @Service
@@ -37,8 +36,7 @@ public class OrdersServiceImpl implements OrdersService {
                     .build();
         } catch (Exception e){
             return ResponseDto.<OrdersDto>builder()
-                    .code(DATABASE_ERROR_CODE)
-                    .message(DATABASE_ERROR + " -> " + e.getMessage())
+                    .message(DATABASE_ERROR + e.getMessage())
                     .build();
         }
     }
@@ -65,18 +63,16 @@ public class OrdersServiceImpl implements OrdersService {
                     .build();
         } catch (Exception e){
             return ResponseDto.<Page<OrdersDto>>builder()
-                    .code(DATABASE_ERROR_CODE)
-                    .message(DATABASE_ERROR + " -> " + e.getMessage())
+                    .message(DATABASE_ERROR + e.getMessage())
                     .build();
         }
     }
 
     @Override
-    public ResponseDto<OrdersDto> getById(Integer id) {
+    public ResponseDto<OrdersDto> getById(String id) {
         if (id == null) {
             return ResponseDto.<OrdersDto>builder()
-                    .message("Id is null")
-                    .code(VALIDATION_ERROR_CODE)
+                    .message(NULL_ID)
                     .build();
         }
         try {
@@ -85,29 +81,25 @@ public class OrdersServiceImpl implements OrdersService {
                 return ResponseDto.<OrdersDto>builder()
                         .data(ordersMapper.toDto(byId.get()))
                         .success(true)
-                        .code(OK_CODE)
                         .message(OK)
                         .build();
             }
             return ResponseDto.<OrdersDto>builder()
                     .message(NOT_FOUND)
-                    .code(NOT_FOUND_ERROR_CODE)
                     .build();
 
         } catch (Exception e) {
             return ResponseDto.<OrdersDto>builder()
-                    .message(DATABASE_ERROR)
-                    .code(DATABASE_ERROR_CODE)
+                    .message(DATABASE_ERROR + e.getMessage())
                     .build();
         }
     }
 
     @Override
-    public ResponseDto<List<OrdersDto>> getByUserId(Integer id) {
+    public ResponseDto<List<OrdersDto>> getByUserId(String id) {
         if (id == null){
             return ResponseDto.<List<OrdersDto>>builder()
-                    .code(VALIDATION_ERROR_CODE)
-                    .message("Id is null!")
+                    .message(NULL_ID)
                     .build();
         }
         try{
@@ -115,20 +107,17 @@ public class OrdersServiceImpl implements OrdersService {
             if (!allByCategoryId.isEmpty()){
                 return ResponseDto.<List<OrdersDto>>builder()
                         .message(OK)
-                        .code(OK_CODE)
                         .success(true)
                         .data(allByCategoryId.stream().map(ordersMapper::toDto).toList())
                         .build();
             }else {
                 return ResponseDto.<List<OrdersDto>>builder()
-                        .code(NOT_FOUND_ERROR_CODE)
                         .message(NOT_FOUND)
                         .build();
             }
         }catch (Exception e){
             return ResponseDto.<List<OrdersDto>>builder()
-                    .code(DATABASE_ERROR_CODE)
-                    .message(DATABASE_ERROR + " : " + e.getMessage())
+                    .message(DATABASE_ERROR + e.getMessage())
                     .build();
         }
     }
@@ -137,8 +126,7 @@ public class OrdersServiceImpl implements OrdersService {
     public ResponseDto<OrdersDto> update(OrdersDto ordersDto) {
         if (ordersDto.getId() == null) {
             return ResponseDto.<OrdersDto>builder()
-                    .message("Product ID is null")
-                    .code(VALIDATION_ERROR_CODE)
+                    .message(NULL_ID)
                     .build();
         }
 
@@ -146,7 +134,6 @@ public class OrdersServiceImpl implements OrdersService {
 
         if (optional.isEmpty()) {
             return ResponseDto.<OrdersDto>builder()
-                    .code(NOT_FOUND_ERROR_CODE)
                     .message(NOT_FOUND)
                     .build();
         }
@@ -176,8 +163,7 @@ public class OrdersServiceImpl implements OrdersService {
                     .build();
         } catch (Exception e) {
             return ResponseDto.<OrdersDto>builder()
-                    .message(DATABASE_ERROR + ": " + e.getMessage())
-                    .code(DATABASE_ERROR_CODE)
+                    .message(DATABASE_ERROR + e.getMessage())
                     .build();
         }
     }

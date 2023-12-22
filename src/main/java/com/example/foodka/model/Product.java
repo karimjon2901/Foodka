@@ -17,11 +17,11 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class Product {
     @Id
-    @GeneratedValue(generator = "productIdSeq")
-    @SequenceGenerator(name = "productIdSeq", sequenceName = "product_id_seq", allocationSize = 1)
-    private Integer id;
-    private String name;
-    private String description;
+    private String id;
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    private Translator name;
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    private Translator description;
     private Double price;
     private Integer count;
     @ManyToOne

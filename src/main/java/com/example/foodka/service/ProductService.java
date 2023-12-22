@@ -9,8 +9,8 @@ import java.util.List;
 public interface ProductService {
     ResponseDto<ProductDto> addProduct(ProductDto productDto);
     ResponseDto<ProductDto> updateProduct(ProductDto productDto);
-    ResponseDto<ProductDto> getProductById(Integer id);
-    ResponseDto<List<ProductDto>> getProductsByCategoryId(Integer id);
+    ResponseDto<ProductDto> getProductById(String id);
+    ResponseDto<List<ProductDto>> getProductsByCategoryId(String id);
     ResponseDto<Page<ProductDto>> getAll(Integer size, Integer page);
-    ResponseDto<Void> delete(Integer id);
+    ResponseDto<Void> delete(String id);
 }

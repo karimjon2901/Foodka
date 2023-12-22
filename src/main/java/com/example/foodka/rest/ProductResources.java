@@ -47,7 +47,7 @@ public class ProductResources {
                     content = @Content(mediaType = "application/json"))
     )
     @GetMapping("/by-category/{id}")
-    public ResponseDto<List<ProductDto>> getByCategory(@PathVariable Integer id){
+    public ResponseDto<List<ProductDto>> getByCategory(@PathVariable String id){
         return productService.getProductsByCategoryId(id);
     }
 
@@ -58,7 +58,7 @@ public class ProductResources {
                     content = @Content(mediaType = "application/json"))
     )
     @GetMapping("/{id}")
-    public ResponseDto<ProductDto> getProductById(@PathVariable Integer id){
+    public ResponseDto<ProductDto> getProductById(@PathVariable String id){
         return productService.getProductById(id);
     }
 
@@ -80,7 +80,7 @@ public class ProductResources {
                     content = @Content(mediaType = "application/json"))
     )
     @DeleteMapping("/{id}")
-    public ResponseDto<Void> deleteProduct(@PathVariable Integer id){
+    public ResponseDto<Void> deleteProduct(@PathVariable String id){
         return productService.delete(id);
     }
 }

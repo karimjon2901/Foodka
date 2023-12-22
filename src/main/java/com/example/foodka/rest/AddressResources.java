@@ -34,7 +34,7 @@ public class AddressResources {
                     content = @Content(mediaType = "application/json"))
     )
     @GetMapping
-    public ResponseDto<List<AddressDto>> getAll(@RequestParam Integer id){
+    public ResponseDto<List<AddressDto>> getAll(@RequestParam String id){
         return addressService.getAllByUserId(id);
     }
 
@@ -45,7 +45,7 @@ public class AddressResources {
                     content = @Content(mediaType = "application/json"))
     )
     @GetMapping("/{id}")
-    public ResponseDto<AddressDto> getById(@PathVariable Integer id){
+    public ResponseDto<AddressDto> getById(@PathVariable String id){
         return addressService.getById(id);
     }
 
@@ -56,7 +56,7 @@ public class AddressResources {
                     content = @Content(mediaType = "application/json"))
     )
     @DeleteMapping("/{id}")
-    public ResponseDto<Void> delete(@PathVariable Integer id){
+    public ResponseDto<Void> delete(@PathVariable String id){
         return addressService.delete(id);
     }
 }

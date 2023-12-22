@@ -22,9 +22,7 @@ import java.util.Collections;
 @NoArgsConstructor
 public class Users implements UserDetails{
     @Id
-    @GeneratedValue(generator = "usersIdSeq")
-    @SequenceGenerator(name = "usersIdSeq", sequenceName = "users_id_seq", allocationSize = 1)
-    private Integer id;
+    private String id;
     private String name;
     private String phoneNumber;
     private String password;

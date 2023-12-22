@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface AddressService {
     ResponseDto<AddressDto> add(AddressDto addressDto);
-    ResponseDto<AddressDto> getById(Integer id);
-    ResponseDto<List<AddressDto>> getAllByUserId(Integer id);
-    ResponseDto<Void> delete(Integer id);
+    ResponseDto<AddressDto> getById(String id);
+    ResponseDto<List<AddressDto>> getAllByUserId(String id);
+    ResponseDto<Void> delete(String id);
 }

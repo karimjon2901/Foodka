@@ -9,7 +9,9 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class CategoryDto {
-    private String id;
-    private TranslatorDto name;
+public class TranslatorDto {
+    private Long id;
+    private String uz;
+    private String ru;
+    private String en;
 }

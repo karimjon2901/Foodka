@@ -13,7 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class OrdersDto {
-    private Integer id;
+    private String id;
     private UsersDto user;
     private Double price;
     private Integer status = 0;

@@ -6,10 +6,10 @@ import com.example.foodka.dto.ResponseDto;
 import com.example.foodka.dto.UsersDto;
 import com.example.foodka.model.Users;
 import com.example.foodka.repository.UsersRepository;
+import com.example.foodka.service.IdGenerator;
 import com.example.foodka.service.UsersService;
 import com.example.foodka.service.mapper.UsersMapper;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -17,7 +17,6 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
-import static com.example.foodka.appStatus.AppStatusCodes.*;
 import static com.example.foodka.appStatus.AppStatusMessages.*;
 @Service
 @RequiredArgsConstructor
@@ -26,9 +25,11 @@ public class UsersServiceImpl implements UsersService {
     private final UsersMapper usersMapper;
     private final JwtService jwtService;
     private final PasswordEncoder encoder;
+    private final IdGenerator idGenerator;
     @Override
     public ResponseDto<String> add(UsersDto usersDto) {
         try{
+            usersDto.setId(idGenerator.generate());
             Optional<Users> user1 = usersRepository.findFirstByPhoneNumber(usersDto.getPhoneNumber());
             if (user1.isEmpty()){
                 Users user = usersMapper.toEntity(usersDto);
@@ -36,7 +37,6 @@ public class UsersServiceImpl implements UsersService {
 
                 return ResponseDto.<String >builder()
                         .message(OK)
-                        .code(OK_CODE)
                         .success(true)
                         .data(jwtService.generateToken(user))
                         .build();
@@ -44,24 +44,21 @@ public class UsersServiceImpl implements UsersService {
             else {
                 return ResponseDto.<String>builder()
                         .message("This phone number already exists!")
-                        .code(VALIDATION_ERROR_CODE)
                         .build();
             }
 
         }catch (Exception e){
             return ResponseDto.<String>builder()
-                    .code(DATABASE_ERROR_CODE)
-                    .message(DATABASE_ERROR + " : " + e.getMessage())
+                    .message(DATABASE_ERROR + e.getMessage())
                     .build();
         }
     }
 
     @Override
-    public ResponseDto<UsersDto> getById(Integer id) {
+    public ResponseDto<UsersDto> getById(String id) {
         if (id == null){
             return ResponseDto.<UsersDto>builder()
-                    .code(VALIDATION_ERROR_CODE)
-                    .message("Id is null!")
+                    .message(NULL_ID)
                     .build();
         }
         try {
@@ -73,13 +70,11 @@ public class UsersServiceImpl implements UsersService {
                             .build())
                     .orElse(ResponseDto.<UsersDto>builder()
                             .message(NOT_FOUND)
-                            .code(NOT_FOUND_ERROR_CODE)
                             .build());
         }catch (Exception e){
             return ResponseDto.<UsersDto>builder()
-                    .message(e.getMessage())
+                    .message(DATABASE_ERROR + e.getMessage())
                     .success(true)
-                    .code(DATABASE_ERROR_CODE)
                     .build();
         }
     }
@@ -89,14 +84,12 @@ public class UsersServiceImpl implements UsersService {
         try{
             return ResponseDto.<List<UsersDto>>builder()
                     .message(OK)
-                    .code(OK_CODE)
                     .success(true)
                     .data(usersRepository.findAll().stream().map(usersMapper::toDto).toList())
                     .build();
         }catch (Exception e){
             return ResponseDto.<List<UsersDto>>builder()
-                    .code(DATABASE_ERROR_CODE)
-                    .message(DATABASE_ERROR + " : " + e.getMessage())
+                    .message(DATABASE_ERROR + e.getMessage())
                     .build();
         }
     }
@@ -106,7 +99,6 @@ public class UsersServiceImpl implements UsersService {
         if (usersDto.getId() == null){
             return ResponseDto.<UsersDto>builder()
                     .message(NULL_VALUE)
-                    .code(VALIDATION_ERROR_CODE)
                     .data(usersDto)
                     .build();
         }
@@ -116,7 +108,6 @@ public class UsersServiceImpl implements UsersService {
         if (userOptional.isEmpty()){
             return ResponseDto.<UsersDto>builder()
                     .message(NOT_FOUND)
-                    .code(NOT_FOUND_ERROR_CODE)
                     .data(usersDto)
                     .build();
         }
@@ -135,7 +126,6 @@ public class UsersServiceImpl implements UsersService {
             else {
                 return ResponseDto.<UsersDto>builder()
                         .message("This phone number already exists!")
-                        .code(VALIDATION_ERROR_CODE)
                         .build();
             }
         }
@@ -145,14 +135,12 @@ public class UsersServiceImpl implements UsersService {
 
             return ResponseDto.<UsersDto>builder()
                     .data(usersMapper.toDto(user))
-                    .code(OK_CODE)
                     .success(true)
                     .message(OK)
                     .build();
         }catch (Exception e){
             return ResponseDto.<UsersDto>builder()
                     .data(usersMapper.toDto(user))
-                    .code(DATABASE_ERROR_CODE)
                     .message(DATABASE_ERROR + e.getMessage())
                     .build();
         }
@@ -169,13 +157,11 @@ public class UsersServiceImpl implements UsersService {
                             .build())
                     .orElse(ResponseDto.<UsersDto>builder()
                             .message(NOT_FOUND)
-                            .code(NOT_FOUND_ERROR_CODE)
                             .build());
         }catch (Exception e){
             return ResponseDto.<UsersDto>builder()
-                    .message(e.getMessage())
+                    .message(DATABASE_ERROR + e.getMessage())
                     .success(true)
-                    .code(DATABASE_ERROR_CODE)
                     .build();
         }
     }
@@ -185,8 +171,7 @@ public class UsersServiceImpl implements UsersService {
         Users users = loadUserByUsername(loginDto.getUsername());
         if (!encoder.matches(loginDto.getPassword(),users.getPassword())){
             return ResponseDto.<String>builder()
-                    .message("Password is not correct "+users.getPassword())
-                    .code(VALIDATION_ERROR_CODE)
+                    .message("Password is not correct " + users.getPassword())
                     .build();
         }
 

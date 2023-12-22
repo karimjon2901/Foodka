@@ -18,9 +18,7 @@ import java.util.List;
 @NoArgsConstructor
 public class Orders {
     @Id
-    @GeneratedValue(generator = "ordersIdSeq")
-    @SequenceGenerator(name = "ordersIdSeq", sequenceName = "orders_id_seq", allocationSize = 1)
-    private Integer id;
+    private String id;
     @ManyToOne
     private Users user;
     private Double price;

@@ -44,7 +44,7 @@ public class CategoryResources {
                     content = @Content(mediaType = "application/json"))
     )
     @GetMapping("/{id}")
-    public ResponseDto<CategoryDto> getById(@PathVariable Integer id){
+    public ResponseDto<CategoryDto> getById(@PathVariable String id){
         return categoryService.getById(id);
     }
 
@@ -55,7 +55,7 @@ public class CategoryResources {
                     content = @Content(mediaType = "application/json"))
     )
     @DeleteMapping("/{id}")
-    public ResponseDto<Void> delete(@PathVariable Integer id){
+    public ResponseDto<Void> delete(@PathVariable String id){
         return categoryService.delete(id);
     }
 }

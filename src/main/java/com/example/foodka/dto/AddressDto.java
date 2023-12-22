@@ -10,7 +10,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AddressDto {
-    private Integer id;
+    private String id;
     private String title;
     private String subTitle;
     private Double lat;

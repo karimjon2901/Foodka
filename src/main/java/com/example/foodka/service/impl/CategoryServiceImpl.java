@@ -5,6 +5,7 @@ import com.example.foodka.dto.ResponseDto;
 import com.example.foodka.model.Category;
 import com.example.foodka.repository.CategoryRepository;
 import com.example.foodka.service.CategoryService;
+import com.example.foodka.service.IdGenerator;
 import com.example.foodka.service.mapper.CategoryMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -12,7 +13,6 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
-import static com.example.foodka.appStatus.AppStatusCodes.*;
 import static com.example.foodka.appStatus.AppStatusMessages.*;
 
 @Service
@@ -20,9 +20,11 @@ import static com.example.foodka.appStatus.AppStatusMessages.*;
 public class CategoryServiceImpl implements CategoryService {
     private final CategoryRepository categoryRepository;
     private final CategoryMapper categoryMapper;
+    private final IdGenerator idGenerator;
     @Override
     public ResponseDto<CategoryDto> addCategory(CategoryDto categoryDto) {
         try {
+            categoryDto.setId(idGenerator.generate());
             return ResponseDto.<CategoryDto>builder()
                     .data(categoryMapper.toDto(
                             categoryRepository.save(
@@ -34,19 +36,17 @@ public class CategoryServiceImpl implements CategoryService {
                     .build();
         }catch (Exception e){
             return ResponseDto.<CategoryDto>builder()
-                    .code(DATABASE_ERROR_CODE)
-                    .message(DATABASE_ERROR + " : " + e.getMessage())
+                    .message(DATABASE_ERROR + e.getMessage())
                     .data(categoryDto)
                     .build();
         }
     }
 
     @Override
-    public ResponseDto<CategoryDto> getById(Integer id) {
+    public ResponseDto<CategoryDto> getById(String id) {
         if (id == null){
             return ResponseDto.<CategoryDto>builder()
-                    .code(VALIDATION_ERROR_CODE)
-                    .message("Id is null!")
+                    .message(NULL_ID)
                     .build();
         }
         try {
@@ -58,13 +58,11 @@ public class CategoryServiceImpl implements CategoryService {
                             .build())
                     .orElse(ResponseDto.<CategoryDto>builder()
                             .message(NOT_FOUND)
-                            .code(NOT_FOUND_ERROR_CODE)
                             .build());
         }catch (Exception e){
             return ResponseDto.<CategoryDto>builder()
-                    .message(e.getMessage())
+                    .message(DATABASE_ERROR + e.getMessage())
                     .success(true)
-                    .code(DATABASE_ERROR_CODE)
                     .build();
         }
     }
@@ -74,24 +72,21 @@ public class CategoryServiceImpl implements CategoryService {
         try{
             return ResponseDto.<List<CategoryDto>>builder()
                     .message(OK)
-                    .code(OK_CODE)
                     .success(true)
                     .data(categoryRepository.findAll().stream().map(categoryMapper::toDto).toList())
                     .build();
         }catch (Exception e){
             return ResponseDto.<List<CategoryDto>>builder()
-                    .code(DATABASE_ERROR_CODE)
-                    .message(DATABASE_ERROR + " : " + e.getMessage())
+                    .message(DATABASE_ERROR + e.getMessage())
                     .build();
         }
     }
 
     @Override
-    public ResponseDto<Void> delete(Integer id) {
+    public ResponseDto<Void> delete(String id) {
         if (id == null){
             return ResponseDto.<Void>builder()
-                    .code(VALIDATION_ERROR_CODE)
-                    .message("Id is null!")
+                    .message(NULL_ID)
                     .build();
         }
         try {
@@ -99,7 +94,6 @@ public class CategoryServiceImpl implements CategoryService {
             if (byId.isEmpty()){
                 return ResponseDto.<Void>builder()
                         .message(NOT_FOUND)
-                        .code(NOT_FOUND_ERROR_CODE)
                         .build();
             }
             categoryRepository.deleteById(id);
@@ -109,8 +103,7 @@ public class CategoryServiceImpl implements CategoryService {
                     .build();
         }catch (Exception e){
             return ResponseDto.<Void>builder()
-                    .code(DATABASE_ERROR_CODE)
-                    .message(DATABASE_ERROR + " : " + e.getMessage())
+                    .message(DATABASE_ERROR + e.getMessage())
                     .build();
         }
     }

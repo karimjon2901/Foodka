@@ -13,9 +13,7 @@ import lombok.Setter;
 @NoArgsConstructor
 public class Address {
     @Id
-    @GeneratedValue(generator = "addressIdSeq")
-    @SequenceGenerator(name = "addressIdSeq", sequenceName = "address_id_seq", allocationSize = 1)
-    private Integer id;
+    private String id;
     private String title;
     private String subTitle;
     private Double lat;

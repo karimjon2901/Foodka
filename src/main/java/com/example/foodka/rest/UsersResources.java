@@ -67,7 +67,7 @@ public class UsersResources {
                     content = @Content(mediaType = "application/json"))
     )
     @GetMapping("/{id}")
-    public ResponseDto<UsersDto> getById(@PathVariable Integer id){
+    public ResponseDto<UsersDto> getById(@PathVariable String id){
         return usersService.getById(id);
     }
 
