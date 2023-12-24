@@ -14,4 +14,6 @@ public interface UsersService {
     ResponseDto<UsersDto> getUserByPhoneNumber(String phoneNumber);
 
     ResponseDto<String> loginUser(LoginDto loginDto);
+
+    boolean tokenIsExpired(String token);
 }

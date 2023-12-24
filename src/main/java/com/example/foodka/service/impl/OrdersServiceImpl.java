@@ -1,11 +1,18 @@
 package com.example.foodka.service.impl;
 
 import com.example.foodka.dto.OrdersDto;
+import com.example.foodka.dto.OrdersInputDto;
+import com.example.foodka.dto.ProductOrderDto;
 import com.example.foodka.dto.ResponseDto;
 import com.example.foodka.model.Orders;
+import com.example.foodka.model.Product;
 import com.example.foodka.repository.OrdersRepository;
+import com.example.foodka.repository.ProductOrderRepository;
+import com.example.foodka.repository.ProductRepository;
+import com.example.foodka.service.IdGenerator;
 import com.example.foodka.service.OrdersService;
 import com.example.foodka.service.mapper.OrdersMapper;
+import com.example.foodka.service.mapper.ProductOrderMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -21,18 +28,34 @@ import static com.example.foodka.appStatus.AppStatusMessages.*;
 public class OrdersServiceImpl implements OrdersService {
     private final OrdersRepository ordersRepository;
     private final OrdersMapper ordersMapper;
+    private final ProductRepository productRepository;
+    private final IdGenerator idGenerator;
+    private final ProductOrderMapper productOrderMapper;
+    private final ProductOrderRepository productOrderRepository;
 
     @Override
-    public ResponseDto<OrdersDto> add(OrdersDto ordersDto) {
-        Orders orders = ordersMapper.toEntity(ordersDto);
-
+    public ResponseDto<OrdersDto> add(OrdersInputDto ordersInputDto) {
         try{
-            ordersRepository.save(orders);
-
+            OrdersDto ordersDto = new OrdersDto();
+            double total=0D;
+            for (ProductOrderDto product : ordersInputDto.getProducts()) {
+                Product pr = productRepository.findById(product.getProductId()).get();
+                total+=(pr.getPrice() * product.getCount());
+                product.setId(idGenerator.generate());
+                productOrderRepository.save(productOrderMapper.toEntity(product));
+            }
+            ordersDto.setProducts(ordersInputDto.getProducts());
+            ordersDto.setPrice(total);
+            ordersDto.setId(idGenerator.generate());
+            ordersDto.setAddress(ordersInputDto.getAddress());
+            ordersDto.setDescription(ordersInputDto.getDescription());
+            ordersDto.setUser(ordersInputDto.getUser());
+            ordersDto.setStatus(0);
+            ordersRepository.save(ordersMapper.toEntity(ordersDto));
             return ResponseDto.<OrdersDto>builder()
-                    .success(true)
                     .message(OK)
-                    .data(ordersMapper.toDto(orders))
+                    .data(ordersDto)
+                    .success(true)
                     .build();
         } catch (Exception e){
             return ResponseDto.<OrdersDto>builder()
@@ -77,7 +100,7 @@ public class OrdersServiceImpl implements OrdersService {
         }
         try {
             Optional<Orders> byId = ordersRepository.findById(id);
-            if (!byId.isEmpty()) {
+            if (byId.isPresent()) {
                 return ResponseDto.<OrdersDto>builder()
                         .data(ordersMapper.toDto(byId.get()))
                         .success(true)
@@ -142,15 +165,6 @@ public class OrdersServiceImpl implements OrdersService {
 
         if (ordersDto.getDescription() != null) {
             orders.setDescription(ordersDto.getDescription());
-        }
-        if (ordersDto.getPrice() != null) {
-            orders.setPrice(ordersDto.getPrice());
-        }
-        if (ordersDto.getTime() != null){
-            orders.setTime(ordersDto.getTime());
-        }
-        if (ordersDto.getStatus() != null) {
-            orders.setStatus(ordersDto.getStatus());
         }
 
         try {

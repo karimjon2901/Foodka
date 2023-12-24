@@ -182,6 +182,11 @@ public class UsersServiceImpl implements UsersService {
                 .build();
     }
 
+    @Override
+    public boolean tokenIsExpired(String token) {
+        return !jwtService.isTokenExpired(token);
+    }
+
     private Users loadUserByUsername(String username) throws UsernameNotFoundException {
         Optional<Users> users = usersRepository.findFirstByPhoneNumber(username);
         if (users.isEmpty()) throw new UsernameNotFoundException("User with phone number: " + username + " is not found");

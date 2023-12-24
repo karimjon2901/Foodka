@@ -1,6 +1,7 @@
 package com.example.foodka.rest;
 
 import com.example.foodka.dto.OrdersDto;
+import com.example.foodka.dto.OrdersInputDto;
 import com.example.foodka.dto.ResponseDto;
 import com.example.foodka.service.OrdersService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -24,8 +25,8 @@ public class OrdersResources {
                     content = @Content(mediaType = "application/json"))
     )
     @PostMapping
-    public ResponseDto<OrdersDto> add(@RequestBody OrdersDto ordersDto){
-        return ordersService.add(ordersDto);
+    public ResponseDto<OrdersDto> add(@RequestBody OrdersInputDto ordersInputDto){
+        return ordersService.add(ordersInputDto);
     }
 
     @Operation(

@@ -81,4 +81,8 @@ public class UsersResources {
     public ResponseDto<List<UsersDto>> getAll(){
         return usersService.getAll();
     }
+    @GetMapping("/token/{token}")
+    public boolean tokenIsExpired(@PathVariable String token){
+        return usersService.tokenIsExpired(token);
+    }
 }
